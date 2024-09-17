@@ -1,6 +1,6 @@
 FROM buildpack-deps:bullseye
 
-LABEL maintainer="Sebastian Ramirez <tiangolo@gmail.com>"
+LABEL maintainer="Sebastian Ramirez <tiangolo@gmail.com> forked by Evandro Fonseca <evandrostein99@gmail.com>"
 
 # Versions of Nginx and nginx-rtmp-module to use
 ENV NGINX_VERSION nginx-1.23.2
