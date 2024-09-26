@@ -1,12 +1,152 @@
 [![Deploy](https://github.com/tiangolo/nginx-rtmp-docker/workflows/Deploy/badge.svg)](https://github.com/tiangolo/nginx-rtmp-docker/actions?query=workflow%3ADeploy)
 
+## Observações de desempenho
+
+Consumo do container com `docker stats` de 61Mb de memória e média de 13% de CPU (Core i7 13700H) para uma trasmissão 3Mbps FULL HD.
+
+- 1 OBS no Host Windows consumindo o streaming
+- 1 Smarphone com VLC consumindo o streamig
+
+![](https://github.com/esfonseca//nginx-rtmp-docker-compose/cena_exemplo_obs.gif)
+
+## Firewall Windows
+
+- Só precisa TCP 1935 de Entrada
+
+        New-NetFirewallRule -DisplayName "Allow TCP 1935" -Direction Inbound -Protocol TCP -LocalPort 1935 -Action Allow -RemoteAddress 0.0.0.0/0
+
+
+- Verifica Escuta da porta `netstat -an | findstr 1935`
+
+          TCP    0.0.0.0:1935           0.0.0.0:0              LISTENING
+          TCP    [::1]:1935             [::]:0                 LISTENING
+
+## OBS Windows de Transmissão (localhost)
+
+- Importar `CENA_RTMP_EXEMPLO.json` para dentro do OBS
+
+COLOCAR IMAGEM DO MENU
+
+## PortProxy
+
+- Descobrir IP do WSL `ip addr | grep inet`
+
+            inet 127.0.0.1/8 scope host lo
+            inet 10.255.255.254/32 brd 10.255.255.254 scope global lo
+            inet6 ::1/128 scope host
+            -----> inet 172.28.54.51/20 brd 172.28.63.255 scope global eth0 <-------
+--- 
+- Comando para PortProxy da porta `RTMP 1935`
+   
+        netsh interface portproxy add v4tov4 listenport=1935           
+        listenaddress=0.0.0.0 connectport=1935 connectaddress=172.28.54.51
+
+netsh interface portproxy show v4tov4
+
+    Escuta em ipv4:             Conectar-se a ipv4:
+
+    Endereço        Porta       Endereço        Porta
+    --------------- ----------  --------------- ----------
+    0.0.0.0         1935        172.28.54.51    1935
+
+## Docker engine install
+
+Inside your WSL, add official [Docker](https://docker.com) keys and repository. The following steps is Debian based, please change to your WSL Linux distro from [official docker documentation](https://docs.docker.com/engine/install/):
+
+```bash
+sudo apt-get update
+sudo apt-get install ca-certificates curl
+sudo install -m 0755 -d /etc/apt/keyrings
+sudo curl -fsSL https://download.docker.com/linux/debian/gpg -o /etc/apt/keyrings/docker.asc
+sudo chmod a+r /etc/apt/keyrings/docker.asc
+
+echo \
+  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/debian \
+  $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
+  sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+sudo apt-get update
+```
+
+Install docker and docker compose:
+
+```bash
+sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+```
+
+Add your Linux user to docker group:
+
+```bash
+sudo usermod -a -G docker $(whoami)
+```
+
+Enable docker services:
+
+```
+sudo systemctl enable docker
+sudo systemctl enable containerd
+```
+
+Restart WSL
+
+```powershell
+wsl --shutdown
+wsl
+```
+
+Now docker should be up and running:
+
+```bash
+$ docker run --rm hello-world
+
+Unable to find image 'hello-world:latest' locally
+latest: Pulling from library/hello-world
+c1ec31eb5944: Pull complete 
+Digest: sha256:a26bff933ddc26d5cdf7faa98b4ae1e3ec20c4985e6f87ac0973052224d24302
+Status: Downloaded newer image for hello-world:latest
+
+Hello from Docker!
+This message shows that your installation appears to be working correctly.
+
+To generate this message, Docker took the following steps:
+ 1. The Docker client contacted the Docker daemon.
+ 2. The Docker daemon pulled the "hello-world" image from the Docker Hub.
+    (amd64)
+ 3. The Docker daemon created a new container from that image which runs the
+    executable that produces the output you are currently reading.
+ 4. The Docker daemon streamed that output to the Docker client, which sent it
+    to your terminal.
+
+To try something more ambitious, you can run an Ubuntu container with:
+ $ docker run -it ubuntu bash
+
+Share images, automate workflows, and more with a free Docker ID:
+ https://hub.docker.com/
+
+For more examples and ideas, visit:
+ https://docs.docker.com/get-started/
+```
+
 ## Supported tags and respective `Dockerfile` links
 
 * [`latest` _(Dockerfile)_](https://github.com/tiangolo/nginx-rtmp-docker/blob/master/Dockerfile)
 
 **Note**: Note: There are [tags for each build date](https://hub.docker.com/r/tiangolo/nginx-rtmp/tags). If you need to "pin" the Docker image version you use, you can select one of those tags. E.g. `tiangolo/nginx-rtmp:latest-2020-08-16`.
 
-# nginx-rtmp
+## Autostart WSL and keep in background
+
+By default, WSL start only when called with wsl command and terminated after Windows terminal is closed... Microsoft don't offer a official way to run wsl vm as service during windows startup. To workaround this, a Task Scheduler can be created to start wsl every time you login in your Windows session and keep running in background.
+
+In my case, i created a task with:
+
+```
+Task type: basic
+Task Action:
+    program: cmd.exe
+    parameters: /c wsl bash -c "nohup bash -c 'while true; do sleep 8h; done &' &> /dev/null"
+Task Trigger: At user logon
+```
+
+## nginx-rtmp - https://github.com/tiangolo/nginx-rtmp-docker
 
 [**Docker**](https://www.docker.com/) image with [**Nginx**](http://nginx.org/en/) using the [**nginx-rtmp-module**](https://github.com/arut/nginx-rtmp-module) module for live multimedia (video) streaming.
 
@@ -101,66 +241,3 @@ You can start from it and modify it as you need. Here's the [documentation relat
 * It is built from the official sources of **Nginx** and **nginx-rtmp-module** without adding anything else. (Surprisingly, most of the available images that include **nginx-rtmp-module** are made from different sources, old versions or add several other components).
 
 * It has a simple default configuration that should allow you to send one or more streams to it and have several clients receiving multiple copies of those streams simultaneously. (It includes `rtmp_auto_push` and an automatic number of worker processes).
-
-## Release Notes
-
-### Latest Changes
-
-#### Internal
-
-* 👷 Update `issue-manager.yml`. PR [#95](https://github.com/tiangolo/nginx-rtmp-docker/pull/95) by [@tiangolo](https://github.com/tiangolo).
-* ⬆ Bump docker/build-push-action from 5 to 6. PR [#92](https://github.com/tiangolo/nginx-rtmp-docker/pull/92) by [@dependabot[bot]](https://github.com/apps/dependabot).
-* 👷 Update `latest-changes` GitHub Action. PR [#93](https://github.com/tiangolo/nginx-rtmp-docker/pull/93) by [@tiangolo](https://github.com/tiangolo).
-* ⬆ Bump docker/build-push-action from 2 to 5. PR [#68](https://github.com/tiangolo/nginx-rtmp-docker/pull/68) by [@dependabot[bot]](https://github.com/apps/dependabot).
-* ⬆ Bump docker/setup-buildx-action from 1 to 3. PR [#67](https://github.com/tiangolo/nginx-rtmp-docker/pull/67) by [@dependabot[bot]](https://github.com/apps/dependabot).
-* ⬆ Bump docker/login-action from 1 to 3. PR [#69](https://github.com/tiangolo/nginx-rtmp-docker/pull/69) by [@dependabot[bot]](https://github.com/apps/dependabot).
-* 👷 Update issue-manager.yml GitHub Action permissions. PR [#76](https://github.com/tiangolo/nginx-rtmp-docker/pull/76) by [@tiangolo](https://github.com/tiangolo).
-* 👷 Update issue-manager.yml GitHub Action permissions. PR [#75](https://github.com/tiangolo/nginx-rtmp-docker/pull/75) by [@tiangolo](https://github.com/tiangolo).
-* 🔧 Add GitHub templates for discussions and issues, and security policy. PR [#72](https://github.com/tiangolo/nginx-rtmp-docker/pull/72) by [@alejsdev](https://github.com/alejsdev).
-* 🔧 Update `latest-changes.yml`. PR [#70](https://github.com/tiangolo/nginx-rtmp-docker/pull/70) by [@alejsdev](https://github.com/alejsdev).
-
-### 0.0.1
-
-#### Features
-
-* ✨ Allow using debug directives, enable ` --with-debug` compile option. PR [#16](https://github.com/tiangolo/nginx-rtmp-docker/pull/16) by [@agconti](https://github.com/agconti).
-* ✨ Add support for multiarch builds, including ARM (e.g. Mac M1). PR [#65](https://github.com/tiangolo/nginx-rtmp-docker/pull/65) by [@tiangolo](https://github.com/tiangolo).
-
-#### Fixes
-
-* 👷 Fix multiarch deploy build. PR [#66](https://github.com/tiangolo/nginx-rtmp-docker/pull/66) by [@tiangolo](https://github.com/tiangolo).
-
-#### Docs
-
-* ✏️ Fix a typo in README. PR [#20](https://github.com/tiangolo/nginx-rtmp-docker/pull/20) by [@Irishsmurf](https://github.com/Irishsmurf).
-
-#### Upgrades
-
-* ⬆️ Upgrade Nginx to 1.23.2 and OS to bullseye. PR [#40](https://github.com/tiangolo/nginx-rtmp-docker/pull/40) by [@tiangolo](https://github.com/tiangolo).
-* ⬆ Upgrade to nginx-1.19.7. PR [#26](https://github.com/tiangolo/nginx-rtmp-docker/pull/26) by [@cesarandreslopez](https://github.com/cesarandreslopez).
-* ⬆ Update RTMP module version to 1.2.2. PR [#28](https://github.com/tiangolo/nginx-rtmp-docker/pull/28) by [@louis70109](https://github.com/louis70109).
-* Upgrade Nginx to version 1.18.0. PR [#13](https://github.com/tiangolo/nginx-rtmp-docker/pull/13) by [@Nathanael-Mtd](https://github.com/Nathanael-Mtd).
-
-#### Internal
-
-* 👷 Update token for latest changes. PR [#50](https://github.com/tiangolo/nginx-rtmp-docker/pull/50) by [@tiangolo](https://github.com/tiangolo).
-* 👷 Add GitHub Action for Docker Hub description. PR [#45](https://github.com/tiangolo/nginx-rtmp-docker/pull/45) by [@tiangolo](https://github.com/tiangolo).
-* Bump tiangolo/issue-manager from 0.3.0 to 0.4.0. PR [#42](https://github.com/tiangolo/nginx-rtmp-docker/pull/42) by [@dependabot[bot]](https://github.com/apps/dependabot).
-* Bump actions/checkout from 2 to 3. PR [#43](https://github.com/tiangolo/nginx-rtmp-docker/pull/43) by [@dependabot[bot]](https://github.com/apps/dependabot).
-* 🎨 Format CI config. PR [#44](https://github.com/tiangolo/nginx-rtmp-docker/pull/44) by [@tiangolo](https://github.com/tiangolo).
-* 👷 Add Dependabot and funding configs. PR [#41](https://github.com/tiangolo/nginx-rtmp-docker/pull/41) by [@tiangolo](https://github.com/tiangolo).
-* 👷 Add scheduled CI. PR [#39](https://github.com/tiangolo/nginx-rtmp-docker/pull/39) by [@tiangolo](https://github.com/tiangolo).
-* 👷 Add alls-green GitHub Action. PR [#38](https://github.com/tiangolo/nginx-rtmp-docker/pull/38) by [@tiangolo](https://github.com/tiangolo).
-* 👷 Build to test on CI for PRs, update GitHub Actions. PR [#37](https://github.com/tiangolo/nginx-rtmp-docker/pull/37) by [@tiangolo](https://github.com/tiangolo).
-* 👷 Add Latest Changes GitHub Action. PR [#29](https://github.com/tiangolo/nginx-rtmp-docker/pull/29) by [@tiangolo](https://github.com/tiangolo).
-* Add CI with GitHub actions. PR [#15](https://github.com/tiangolo/nginx-rtmp-docker/pull/15).
-* ⬆ Bump peter-evans/dockerhub-description from 3 to 4. PR [#63](https://github.com/tiangolo/nginx-rtmp-docker/pull/63) by [@dependabot[bot]](https://github.com/apps/dependabot).
-* ⬆ Bump tiangolo/issue-manager from 0.4.1 to 0.5.0. PR [#64](https://github.com/tiangolo/nginx-rtmp-docker/pull/64) by [@dependabot[bot]](https://github.com/apps/dependabot).
-* Bump actions/checkout from 3 to 4. PR [#52](https://github.com/tiangolo/nginx-rtmp-docker/pull/52) by [@dependabot[bot]](https://github.com/apps/dependabot).
-* ⬆ Bump tiangolo/issue-manager from 0.4.0 to 0.4.1. PR [#61](https://github.com/tiangolo/nginx-rtmp-docker/pull/61) by [@dependabot[bot]](https://github.com/apps/dependabot).
-* 👷 Update dependabot. PR [#55](https://github.com/tiangolo/nginx-rtmp-docker/pull/55) by [@tiangolo](https://github.com/tiangolo).
-* 👷 Update latest-changes. PR [#54](https://github.com/tiangolo/nginx-rtmp-docker/pull/54) by [@tiangolo](https://github.com/tiangolo).
-
-## License
-
-This project is licensed under the terms of the MIT License.
