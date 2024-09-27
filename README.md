@@ -1,12 +1,15 @@
-# Método 01 - WSL2 Ubuntu
+# Método 01 - Raspberry Pi
 
-![](https://github.com/esfonseca/nginx-rtmp-docker-compose/blob/master/img/nginx-rtmp_OBS-WSL-MODE.drawio.png)
-
-# Método 02 - Raspberry Pi
+- Instalar Docker Engine
+- Executar o container
 
 ![](https://github.com/esfonseca/nginx-rtmp-docker-compose/blob/master/img/nginx-rtmp_OBS-RASPBERRYMODE.drawio.png)
 
-## Observações de desempenho
+# Método 02 - WSL2 Ubuntu
+
+![](https://github.com/esfonseca/nginx-rtmp-docker-compose/blob/master/img/nginx-rtmp_OBS-WSL-MODE.drawio.png)
+
+## Observações de desempenho (Método 02 - WSL2 Ubuntu)
 
 Consumo do container com `docker stats` de 61Mb de memória e média de 13% de CPU (Core i7 13700H) para uma trasmissão 3Mbps FULL HD.
 
@@ -15,12 +18,11 @@ Consumo do container com `docker stats` de 61Mb de memória e média de 13% de C
 
 ![](https://github.com/esfonseca/nginx-rtmp-docker-compose/blob/master/img/cena_exemplo_obs.gif)
 
-## Firewall Windows
+## Liberar Firewall Windows
 
-- Só precisa TCP 1935 de Entrada
+- Liberar porta TCP 1935 de Entrada
 
         New-NetFirewallRule -DisplayName "Allow TCP 1935" -Direction Inbound -Protocol TCP -LocalPort 1935 -Action Allow -RemoteAddress 0.0.0.0/0
-
 
 - Verifica Escuta da porta `netstat -an | findstr 1935`
 
@@ -34,6 +36,8 @@ Consumo do container com `docker stats` de 61Mb de memória e média de 13% de C
 ![](https://github.com/esfonseca/nginx-rtmp-docker-compose/blob/master/img/import_scene_obs.png)
 
 ## Configuração de Transmissão RTMP - DJI Fly
+
+- Endereço RTMP colocar o IP do Docker Host
 
 ![](https://github.com/esfonseca/nginx-rtmp-docker-compose/blob/master/img/app_dji_fly.jpg)
 
