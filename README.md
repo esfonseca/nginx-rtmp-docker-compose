@@ -38,13 +38,13 @@
         netsh interface portproxy add v4tov4 listenport=1935           
         listenaddress=0.0.0.0 connectport=1935 connectaddress=172.28.54.51
 
-netsh interface portproxy show v4tov4
+- Comando `netsh interface portproxy show v4tov4` lista endereços de entrada 0.0.0.0 (Todos) e endereço de destino `IP do WSL`
 
-    Escuta em ipv4:             Conectar-se a ipv4:
+        Escuta em ipv4:             Conectar-se a ipv4:
 
-    Endereço        Porta       Endereço        Porta
-    --------------- ----------  --------------- ----------
-    0.0.0.0         1935        172.28.54.51    1935
+        Endereço        Porta       Endereço        Porta
+        --------------- ----------  --------------- ----------
+        0.0.0.0         1935        172.28.54.51    1935
 
 ### OBS Windows de Transmissão (localhost)
 
