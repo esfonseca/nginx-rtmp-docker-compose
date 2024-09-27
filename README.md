@@ -5,6 +5,8 @@
 
 ![](https://github.com/esfonseca/nginx-rtmp-docker-compose/blob/master/img/nginx-rtmp_OBS-RASPBERRYMODE.drawio.png)
 
+**Cenário real de uso do Método 01:** https://www.youtube.com/live/0SPbkGEQLiE?t=2735s
+
 # Método 02 - WSL2 Ubuntu
 
 - Realizar Liberações no Firewall
