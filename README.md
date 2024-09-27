@@ -1,5 +1,13 @@
 [![Deploy](https://github.com/tiangolo/nginx-rtmp-docker/workflows/Deploy/badge.svg)](https://github.com/tiangolo/nginx-rtmp-docker/actions?query=workflow%3ADeploy)
 
+# Método 01 - WSL2 Ubuntu
+
+![](https://github.com/esfonseca/nginx-rtmp-docker-compose/img/blob/master/nginx-rtmp_OBS-WSL-MODE.drawio.png)
+
+# Método 02 - Raspberry Pi
+
+![](https://github.com/esfonseca/nginx-rtmp-docker-compose/img/blob/master/nginx-rtmp_OBS-RASPBERRYMODE.drawio.png)
+
 ## Observações de desempenho
 
 Consumo do container com `docker stats` de 61Mb de memória e média de 13% de CPU (Core i7 13700H) para uma trasmissão 3Mbps FULL HD.
@@ -7,7 +15,7 @@ Consumo do container com `docker stats` de 61Mb de memória e média de 13% de C
 - 1 OBS no Host Windows consumindo o streaming
 - 1 Smarphone com VLC consumindo o streamig
 
-![](https://github.com/esfonseca/nginx-rtmp-docker-compose/blob/master/cena_exemplo_obs.gif)
+![](https://github.com/esfonseca/nginx-rtmp-docker-compose/img/blob/master/cena_exemplo_obs.gif)
 
 ## Firewall Windows
 
@@ -25,7 +33,11 @@ Consumo do container com `docker stats` de 61Mb de memória e média de 13% de C
 
 - Importar `CENA_RTMP_EXEMPLO.json` para dentro do OBS
 
-COLOCAR IMAGEM DO MENU
+![](https://github.com/esfonseca/nginx-rtmp-docker-compose/img/blob/master/import_scene_obs.png)
+
+## Configuração de Transmissão RTMP - DJI Fly
+
+![](https://github.com/esfonseca/nginx-rtmp-docker-compose/img/blob/master/app_dji_fly.jpg)
 
 ## PortProxy
 
