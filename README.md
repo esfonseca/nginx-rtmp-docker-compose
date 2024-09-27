@@ -8,7 +8,7 @@
 # Método 02 - WSL2 Ubuntu
 
 - Realizar Liberações no Firewall
-- Instalar o WSL no Windows [](wsl2-devops-configuration.md)
+- Instalar o WSL no Windows [](./wsl2-devops-configuration.md)
 - Fazer o PortProxy no Host para o WSL
 
 ![](https://github.com/esfonseca/nginx-rtmp-docker-compose/blob/master/img/nginx-rtmp_OBS-WSL-MODE.drawio.png)
