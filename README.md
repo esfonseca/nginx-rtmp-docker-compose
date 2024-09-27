@@ -52,6 +52,10 @@
 
 ![](https://github.com/esfonseca/nginx-rtmp-docker-compose/blob/master/img/import_scene_obs.png)
 
+- Cena importada no OBS
+
+![](https://github.com/esfonseca/nginx-rtmp-docker-compose/blob/master/img/cena_exemplo_obs.gif)
+
 ## Configuração de Transmissão RTMP - DJI Fly
 
 - Endereço RTMP colocar o IP do Docker Host
@@ -64,8 +68,6 @@ Consumo do container com `docker stats` de 61Mb de memória e média de 13% de C
 
 - 1 OBS no Host Windows consumindo o streaming
 - 1 Smarphone com VLC consumindo o streamig
-
-![](https://github.com/esfonseca/nginx-rtmp-docker-compose/blob/master/img/cena_exemplo_obs.gif)
 
 ## Docker engine install (WSL)
 
