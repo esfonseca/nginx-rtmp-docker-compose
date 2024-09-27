@@ -68,3 +68,19 @@ Consumo do container com `docker stats` de 61Mb de memória e média de 13% de C
 
 - 1 OBS no Host Windows consumindo o streaming
 - 1 Smarphone com VLC consumindo o streamig
+
+## Equipamento utilizados
+
+| Equipamentos             | Windows - WSL2 | Raspberry Pi |
+|--------------------------|----------------|--------------|
+| Drone DJI Air2S          | X              | X            |
+| Controle DJI RC2         | X              | X            |
+| Router Gigabit 5GHz      | X              | X            |
+| Raspberry Pi 5           |                | X            |
+| W11 Host PC (Core i7 13700H) | X              |              |
+
+## Softwares 
+
+- W11 23H2 22631.4169
+- OBS Studio : https://obsproject.com/pt-br/download
+- Ciclano Multi Streaming Plataform (Paid) - https://app.ciclano.io/
