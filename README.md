@@ -7,7 +7,7 @@ Consumo do container com `docker stats` de 61Mb de memória e média de 13% de C
 - 1 OBS no Host Windows consumindo o streaming
 - 1 Smarphone com VLC consumindo o streamig
 
-![](https://github.com/esfonseca//nginx-rtmp-docker-compose/cena_exemplo_obs.gif)
+![](https://github.com/esfonseca/nginx-rtmp-docker-compose/blob/master/cena_exemplo_obs.gif)
 
 ## Firewall Windows
 
