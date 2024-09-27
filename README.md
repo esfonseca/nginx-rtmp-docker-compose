@@ -1,6 +1,6 @@
 # Método 01 - Raspberry Pi
 
-- Instalar Docker Engine
+- Instalar Docker Engine 
 - Executar o container
 
 ![](https://github.com/esfonseca/nginx-rtmp-docker-compose/blob/master/img/nginx-rtmp_OBS-RASPBERRYMODE.drawio.png)
@@ -8,7 +8,7 @@
 # Método 02 - WSL2 Ubuntu
 
 - Realizar Liberações no Firewall
-- Instalar o WSL no Windows
+- Instalar o WSL no Windows [](wsl2-devops-configuration.md)
 - Fazer o PortProxy no Host para o WSL
 
 ![](https://github.com/esfonseca/nginx-rtmp-docker-compose/blob/master/img/nginx-rtmp_OBS-WSL-MODE.drawio.png)
